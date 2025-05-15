@@ -37,10 +37,12 @@ class _VideosScreenState extends State<VideosScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         //title: Text('Videos Screen'),
         backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
        body: satusPortantes 
        ? Center(child: CircularProgressIndicator(strokeWidth: 2,), )
