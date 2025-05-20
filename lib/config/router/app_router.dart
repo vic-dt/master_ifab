@@ -1,5 +1,6 @@
 
 import 'package:go_router/go_router.dart';
+
 import 'package:master_ifab/presentation/screens/screens.dart';
 
 final appRouter = GoRouter(
@@ -16,6 +17,10 @@ final appRouter = GoRouter(
        GoRoute(
       path: '/videos',
       builder: (context, state) => const VideosScreen(),
+      ),
+      GoRoute(
+      path: '/bands',
+      builder: (context, state) => const BandsScreen(),
       ),
   ]
   );
