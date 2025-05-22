@@ -22,5 +22,9 @@ final appRouter = GoRouter(
       path: '/bands',
       builder: (context, state) => const BandsScreen(),
       ),
+      GoRoute(
+      path: '/theme-mutante',
+      builder: (context, state) => const ThemeMutanteScreen(),
+      ),
   ]
   );
