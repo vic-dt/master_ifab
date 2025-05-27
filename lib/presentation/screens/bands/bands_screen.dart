@@ -1,51 +1,108 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:master_ifab/config/config.dart';
+import 'package:master_ifab/presentation/providers/provider_socket.dart';
+import 'package:pie_chart/pie_chart.dart';
 
-class BandsScreen extends StatefulWidget {
+class BandsScreen extends ConsumerWidget {
+
   const BandsScreen({super.key});
 
-  @override
-  State<BandsScreen> createState() => _BandsScreenState();
-}
-
-class _BandsScreenState extends State<BandsScreen> {
-
-  List<Band> bands=[
-    Band(id: '1', nomen: 'Metallica', numerusVotum: 5),
-    Band(id: '2', nomen: 'Queen', numerusVotum: 1),
-    Band(id: '3', nomen: 'Héroes del Silencio', numerusVotum: 2),
-    Band(id: '4', nomen: 'Bon Jovi', numerusVotum: 5),
-
-  ];
 
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final bands = ref.watch(bandsProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Bandas'),
       ),
-      body: ListView.builder(
-        itemCount: bands.length,
-        itemBuilder: (context, i)=>_bandTile(bands[i])
-        
-        ),
-      floatingActionButton: FloatingActionButton(
-        elevation: 1,
-        onPressed: ()=> addereNovumBand(),
-        child: Icon(Icons.add),
-        ),
+      body: Column(
+        children: [
+
+          _videreData(bands),
+
+          Expanded(
+            child: ListView.builder(
+              itemCount: bands.length,
+              itemBuilder: (context, i)=>_bandTile(context, ref, bands[i])
+            )
+         )
+        ],
+
+      ),
+      
+      
+      floatingActionButton: Visibility(
+        visible:bands.length <7 ? true :false,
+        child: FloatingActionButton(
+          elevation: 1,
+          onPressed: ()=> addereNovumBand(context, ref),
+          child: Icon(Icons.add),
+          ),
+      ),
     );
   }
 
-  Widget _bandTile(Band band) {
+
+Widget _videreData( List<Band> bands ) {
+
+    // ignore: prefer_collection_literals
+    Map<String, double> dataMap = Map(); 
+
+    for (var band in bands) { 
+      dataMap.putIfAbsent(band.nomen, () => band.numerusVotum.toDouble() );
+    }
+
+    final List<Color> colorList = [
+      Colors.pink.shade100,
+      Colors.pink.shade300,
+      Colors.blue.shade200,
+      Colors.blue.shade600,
+      Colors.lightGreen.shade200,
+      Colors.lightGreen.shade600,
+    ];
+  
+    return dataMap.isNotEmpty ? Container(
+      padding: const EdgeInsets.only(left: 5, top: 5),
+      width: double.infinity,
+      height: 200.0,
+      child: PieChart(
+        dataMap: dataMap,
+        animationDuration: const Duration(milliseconds: 800),
+        colorList: colorList,
+        chartType: ChartType.ring,
+        legendOptions: const LegendOptions(
+          showLegendsInRow: false,
+          legendPosition: LegendPosition.right,
+          showLegends: true,
+          legendTextStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontFamily: "CupertinoSystemText", fontSize: 17,
+          ),
+        ),
+        chartValuesOptions: ChartValuesOptions(
+          showChartValues: dataMap.length <= 6, // con más de 6 no se ve el valor
+          showChartValueBackground: true,
+          showChartValuesInPercentage: false,
+          showChartValuesOutside: false,
+        ),
+      ),
+    ) : const LinearProgressIndicator();
+  }
+
+
+
+  Widget _bandTile(BuildContext context, WidgetRef ref,  Band band) {
     return Dismissible(
       key: Key(band.id) ,
       direction: DismissDirection.startToEnd,
       onDismissed: (direction){
-        bands.remove(band);
+        ref.read(bandsProvider.notifier).delereBand(band);
       },
       background: Container(
         padding: const EdgeInsets.only(left:8),
@@ -66,16 +123,15 @@ class _BandsScreenState extends State<BandsScreen> {
             title: Text(band.nomen),
             trailing: Text('${band.numerusVotum}', style: TextStyle(fontSize: 20),),
             onTap: (){
-              band.numerusVotum++;
-              setState(() {
-                
-              });
+              ref.read(bandsProvider.notifier).addereVotum(band);
+              
             },
       
           ),
     );
   }
-  addereNovumBand(){
+  addereNovumBand(BuildContext context, WidgetRef ref){
+    
     final TextEditingController textumController = TextEditingController();
 
     // showDialog(
@@ -113,7 +169,7 @@ class _BandsScreenState extends State<BandsScreen> {
             isDefaultAction: true,
             child: const Text('Add'),
             onPressed: () {
-              addereBandAdCollectione(textumController.text);
+              addereBandAdCollectione(context, ref, textumController.text);
             }
           ),
           CupertinoDialogAction(
@@ -126,9 +182,10 @@ class _BandsScreenState extends State<BandsScreen> {
     );
 
   }
-  void addereBandAdCollectione(String nomen){
+  void addereBandAdCollectione(BuildContext context, WidgetRef ref, String nomen){
+
     if(nomen.length>1){
-      bands.add(
+      ref.read(bandsProvider.notifier).addereBand(
       Band(
         id:DateTime.now().toString(), 
         nomen: nomen, 
@@ -138,7 +195,7 @@ class _BandsScreenState extends State<BandsScreen> {
     }
     Navigator.pop(context);
 
-    setState(() {});
+   
     
   }
  
