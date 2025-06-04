@@ -30,5 +30,9 @@ final appRouter = GoRouter(
       path: '/sensors',
       builder: (context, state) => const SensoresScreen(),
       ),
+      GoRoute(
+      path: '/gyroscope',
+      builder: (context, state) => const GyroscopeSpheraScreen(),
+      ),
   ]
   );
