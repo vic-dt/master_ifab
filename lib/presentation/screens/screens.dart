@@ -6,3 +6,5 @@ export './theme_mutante/theme_mutante_screen.dart';
 export './sensores/sensores_screen.dart';
 export './sensores/gyroscope_sphera_screen.dart';
 export './locus/locus_screen.dart';
+export './pokemons/pokemons_screen.dart';
+export './pokemons/pokemon_screen.dart';
