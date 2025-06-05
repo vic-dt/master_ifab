@@ -7,3 +7,5 @@ export './sensores/gyroscope_provider.dart';
 export './sensores/magnetometrum_provider.dart';
 
 
+export './locus_provider.dart';
+export './locus_vigilia_provider.dart';
