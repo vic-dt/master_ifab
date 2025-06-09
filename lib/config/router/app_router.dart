@@ -52,5 +52,9 @@ final appRouter = GoRouter(
           )
       ]
       ),
+       GoRoute(
+      path: '/shoes',
+      builder: (context, state) => const CalceusScreen(),
+      ),
   ]
   );
