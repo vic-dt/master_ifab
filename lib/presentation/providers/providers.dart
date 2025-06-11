@@ -12,3 +12,4 @@ export './locus_vigilia_provider.dart';
 
 export './pokemon_index_provider.dart';
 export './pokemon_provider.dart';
+export './calceus_provider.dart';
